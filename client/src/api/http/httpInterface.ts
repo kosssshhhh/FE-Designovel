@@ -71,4 +71,8 @@ export class HttpInterface {
 	async postUserInputImage(formData: FormData | null) {
 		return this.apiClient.post('/image/search', formData);
 	}
+
+	async getClusterData(data: { mallTypeId: string; categoryList: any[]; nclusters: number }): Promise<any> {
+		return this.apiClient.post('/cluster/search', data);
+	}
 }

@@ -1,122 +1,51 @@
+import { useState } from 'react';
 import Chart from 'react-apexcharts';
-import { formatPriceRange } from '@/pages/home/_utils/formatPriceRange.ts';
-import { PriceTrendDataType } from '@/pages/home/_types/priceTrendData.type.ts';
-
-interface PriceTrendChartProps {
-	data: PriceTrendDataType;
-}
 
 export default function ClusteringChart() {
-	const series = [
+	const [hoveredStyleId, setHoveredStyleId] = useState<string | null>(null);
+
+	// const { data: tooltipData, isLoading } = useFetchTooltipData(hoveredStyleId);
+
+	const data = [
 		{
-			name: 'SAMPLE A',
-			data: [
-				[16.4, 5.4],
-				[21.7, 2],
-				[25.4, 3],
-				[19, 2],
-				[10.9, 1],
-				[13.6, 3.2],
-				[10.9, 7.4],
-				[10.9, 0],
-				[10.9, 8.2],
-				[16.4, 0],
-				[16.4, 1.8],
-				[13.6, 0.3],
-				[13.6, 0],
-				[29.9, 0],
-				[27.1, 2.3],
-				[16.4, 0],
-				[13.6, 3.7],
-				[10.9, 5.2],
-				[16.4, 6.5],
-				[10.9, 0],
-				[24.5, 7.1],
-				[10.9, 0],
-				[8.1, 4.7],
-				[19, 0],
-				[21.7, 1.8],
-				[27.1, 0],
-				[24.5, 0],
-				[27.1, 0],
-				[29.9, 1.5],
-				[27.1, 0.8],
-				[22.1, 2],
-			],
+			styleId: '4126979',
+			x: 16.4,
+			y: 5.4,
+			cluster: 0,
 		},
 		{
-			name: 'SAMPLE B',
-			data: [
-				[36.4, 13.4],
-				[1.7, 11],
-				[5.4, 8],
-				[9, 17],
-				[1.9, 4],
-				[3.6, 12.2],
-				[1.9, 14.4],
-				[1.9, 9],
-				[1.9, 13.2],
-				[1.4, 7],
-				[6.4, 8.8],
-				[3.6, 4.3],
-				[1.6, 10],
-				[9.9, 2],
-				[7.1, 15],
-				[1.4, 0],
-				[3.6, 13.7],
-				[1.9, 15.2],
-				[6.4, 16.5],
-				[0.9, 10],
-				[4.5, 17.1],
-				[10.9, 10],
-				[0.1, 14.7],
-				[9, 10],
-				[12.7, 11.8],
-				[2.1, 10],
-				[2.5, 10],
-				[27.1, 10],
-				[2.9, 11.5],
-				[7.1, 10.8],
-				[2.1, 12],
-			],
+			styleId: '4126027',
+			x: 21.7,
+			y: 2,
+			cluster: 1,
 		},
-		{
-			name: 'SAMPLE C',
-			data: [
-				[21.7, 3],
-				[23.6, 3.5],
-				[24.6, 3],
-				[29.9, 3],
-				[21.7, 20],
-				[23, 2],
-				[10.9, 3],
-				[28, 4],
-				[27.1, 0.3],
-				[16.4, 4],
-				[13.6, 0],
-				[19, 5],
-				[22.4, 3],
-				[24.5, 3],
-				[32.6, 3],
-				[27.1, 4],
-				[29.6, 6],
-				[31.6, 8],
-				[21.6, 5],
-				[20.9, 4],
-				[22.4, 0],
-				[32.6, 10.3],
-				[29.7, 20.8],
-				[24.5, 0.8],
-				[21.4, 0],
-				[21.7, 6.9],
-				[28.6, 7.7],
-				[15.4, 0],
-				[18.1, 0],
-				[33.4, 0],
-				[16.4, 0],
-			],
-		},
+		// 더 많은 데이터...
 	];
+
+	// 데이터 가공
+	const series = data.reduce(
+		(acc, curr) => {
+			const point = {
+				x: curr.x,
+				y: curr.y,
+				productId: curr.styleId,
+				cluster: curr.cluster,
+			};
+
+			if (acc[curr.cluster]) {
+				acc[curr.cluster].data.push(point);
+			} else {
+				acc[curr.cluster] = {
+					name: `Cluster ${curr.cluster}`,
+					data: [point],
+				};
+			}
+
+			return acc;
+		},
+		[] as { name: string; data: any[] }[],
+	);
+
 	const options = {
 		chart: {
 			height: 350,
@@ -124,6 +53,22 @@ export default function ClusteringChart() {
 			zoom: {
 				enabled: true,
 				type: 'xy' as const,
+			},
+			events: {
+				dataPointSelection: function (event, chartContext, config) {
+					const data = config.w.config.series[config.seriesIndex].data[config.dataPointIndex];
+					alert(`상품 ID: ${data.productId}, 상품 이름: ${data.productName}`);
+					// 여기에 원하는 방식으로 상품 정보 표시 기능을 추가할 수 있습니다.
+				},
+			},
+		},
+		tooltip: {
+			custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+				const data = w.config.series[seriesIndex].data[dataPointIndex];
+				return `<div class="tooltip-box p-10">
+                  <strong>상품 이름:</strong> ${data.productName} <br/>
+                  <strong>브랜드:</strong> ${data.brand} <br/>
+                </div>`;
 			},
 		},
 		xaxis: {
