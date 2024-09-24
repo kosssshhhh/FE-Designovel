@@ -1,3 +1,4 @@
+import { ClusterDataType } from '@/pages/home/_types/clusterData.type';
 import { ICommunication } from './http';
 
 // import { Response } from 'http-proxy-middleware/dist/types';
@@ -72,7 +73,10 @@ export class HttpInterface {
 		return this.apiClient.post('/image/search', formData);
 	}
 
-	async getClusterData(data: { mallTypeId: string; categoryList: any[]; nclusters: number }): Promise<any> {
+	async getClusterData(data: { mallTypeId: string; categoryList: any[]; nClusters: number }): Promise<ClusterDataType> {
 		return this.apiClient.post('/cluster/search', data);
+	}
+	async getClusterDetailData(mallTypeId: string, styleId: string) {
+		return this.apiClient.get(`/cluster/search/${mallTypeId}/${styleId}`);
 	}
 }

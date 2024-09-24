@@ -29,7 +29,7 @@ export default function ClusterContainer() {
 			<h3 className="text-xl font-bold text-gray-900 mb-2">상품별 이미지 클러스터링</h3>
 			<span className="text-base font-normal text-gray-500">Image Clustering</span>
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-				<ClusteringChart />
+				<ClusteringChart data={data?.data} isLoading={isLoading} isError={isError} />
 				{/* <div className="w-1/2 h-90">필터</div> */}
 				{/* <ImageFilters /> */}
 

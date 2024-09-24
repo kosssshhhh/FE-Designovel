@@ -9,5 +9,8 @@
 	"endOfLine": "auto",
 	"arrowParens": "always",
 	"trailingComma": "all",
-	"jsxBracketSameLine": true
+	"jsxBracketSameLine": true,
+	"prettier.singleQuote": true,
+	"prettier.jsxSingleQuote": true,
+	"prettier.embeddedLanguageFormatting": "auto"
 }

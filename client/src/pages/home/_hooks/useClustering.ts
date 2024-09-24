@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useFileUpload } from '@/pages/imageSearch/_hooks/useFileUpload';
 
 import { useClusterFilter } from './useClusterFilter';
 import { useFetchClustering } from './useFetchClustering';
@@ -9,7 +8,13 @@ export const useClustering = () => {
 		useClusterFilter();
 	const [shouldFetch, setShouldFetch] = useState(false);
 
-	const { data, isLoading, isError } = useFetchClustering(mallType, categoryList, Number(offset), shouldFetch);
+	const { data, isLoading, isError } = useFetchClustering(
+		mallType,
+		categoryList,
+		Number(offset),
+		shouldFetch,
+		setShouldFetch,
+	);
 
 	const handleSubmit = () => {
 		// 검색 파라미터가 모두 선택되었는지 확인
