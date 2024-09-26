@@ -1,144 +1,193 @@
+import { useEffect, useMemo, useState } from 'react';
 import Chart from 'react-apexcharts';
-import { formatPriceRange } from '@/pages/home/_utils/formatPriceRange.ts';
-import { PriceTrendDataType } from '@/pages/home/_types/priceTrendData.type.ts';
+import Loading from '@/components/Loading';
+import React from 'react';
+import { ClusterNodeType } from '@/pages/home/_types/clusterData.type';
+import { useFetchClusterDetail } from '../../_hooks/useFetchClusterDetail';
+import { debounce } from 'lodash';
+import ApexCharts from 'apexcharts';
 
-interface PriceTrendChartProps {
-	data: PriceTrendDataType;
+interface ClusteringChartProps {
+	data: ClusterNodeType[];
+	isLoading: boolean;
+	isError: boolean;
 }
 
-export default function ClusteringChart() {
-	const series = [
-		{
-			name: 'SAMPLE A',
-			data: [
-				[16.4, 5.4],
-				[21.7, 2],
-				[25.4, 3],
-				[19, 2],
-				[10.9, 1],
-				[13.6, 3.2],
-				[10.9, 7.4],
-				[10.9, 0],
-				[10.9, 8.2],
-				[16.4, 0],
-				[16.4, 1.8],
-				[13.6, 0.3],
-				[13.6, 0],
-				[29.9, 0],
-				[27.1, 2.3],
-				[16.4, 0],
-				[13.6, 3.7],
-				[10.9, 5.2],
-				[16.4, 6.5],
-				[10.9, 0],
-				[24.5, 7.1],
-				[10.9, 0],
-				[8.1, 4.7],
-				[19, 0],
-				[21.7, 1.8],
-				[27.1, 0],
-				[24.5, 0],
-				[27.1, 0],
-				[29.9, 1.5],
-				[27.1, 0.8],
-				[22.1, 2],
-			],
+function DefaultView() {
+	return (
+		<div className="flex flex-col justify-center items-center h-96">
+			<h2 className="text-lg font-bold mb-4">클러스터링 데이터를 검색해 주세요</h2>
+			<p className="text-gray-600">데이터를 선택하여 클러스터링 분석을 시작할 수 있습니다.</p>
+		</div>
+	);
+}
+
+const skeletonStyle = `
+	display: block;
+	width: 96px;
+	height: 144px;
+	background-color: #e0e0e0;
+	border-radius: 8px;
+`;
+
+const ClusteringChart = React.memo(function ClusteringChart({ data, isLoading, isError }: ClusteringChartProps) {
+	const [hoveredStyleId, setHoveredStyleId] = useState<string | null>(null);
+	const [hoveredMallTypeId, setHoveredMallTypeId] = useState<string | null>(null);
+
+	const { DetailData, DetailIsLoading } = useFetchClusterDetail(hoveredMallTypeId || '', hoveredStyleId || '');
+
+	// 차트 ID 설정
+	const chartId = 'clustering-chart';
+
+	// 툴팁 내용을 업데이트하는 useEffect
+	useEffect(() => {
+		console.log(DetailData);
+		if (DetailData && hoveredStyleId && hoveredMallTypeId) {
+			// ApexCharts.exec를 사용해 차트 옵션 업데이트
+			ApexCharts.exec(
+				chartId,
+				'updateOptions',
+				{
+					tooltip: {
+						custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+							const data = w.config.series[seriesIndex].data[dataPointIndex];
+							return `
+							<div class="tooltip-box p-10">
+								<div class="image-wrapper" style="position: relative; width: 96px; height: 144px;">
+									<!-- 스켈레톤 UI -->
+									<div class="skeleton" style="${skeletonStyle}"></div>
+									<!-- 실제 이미지 -->
+									<img class="lazy-image w-24 h-[144px] object-cover" 
+										src="${data.imageURL}" 
+										alt="style Image" 
+										style="position: absolute; top: 0; left: 0; display: none;" 
+										onload="this.style.display='block'; this.previousElementSibling.style.display='none';" />
+								</div>
+								<strong>상품 이름:</strong> ${DetailData?.styleName} <br/>
+								<strong>브랜드:</strong> ${DetailData?.brand || '브랜드 정보 없음'} <br/>
+								<strong>고정가:</strong> ${DetailData?.fixedPrice || '고정가 정보 없음'} <br/>
+								<strong>할인가:</strong> ${DetailData?.discountedPrice || '할인가 정보 없음'} <br/>
+							</div>
+						`;
+						},
+					},
+				},
+				false,
+				false,
+			);
+		}
+	}, [DetailData]);
+
+	const handleHoverDebounced = useMemo(
+		() => (mallTypeId: string, styleId: string) => {
+			setHoveredMallTypeId(mallTypeId);
+			setHoveredStyleId(styleId);
 		},
-		{
-			name: 'SAMPLE B',
-			data: [
-				[36.4, 13.4],
-				[1.7, 11],
-				[5.4, 8],
-				[9, 17],
-				[1.9, 4],
-				[3.6, 12.2],
-				[1.9, 14.4],
-				[1.9, 9],
-				[1.9, 13.2],
-				[1.4, 7],
-				[6.4, 8.8],
-				[3.6, 4.3],
-				[1.6, 10],
-				[9.9, 2],
-				[7.1, 15],
-				[1.4, 0],
-				[3.6, 13.7],
-				[1.9, 15.2],
-				[6.4, 16.5],
-				[0.9, 10],
-				[4.5, 17.1],
-				[10.9, 10],
-				[0.1, 14.7],
-				[9, 10],
-				[12.7, 11.8],
-				[2.1, 10],
-				[2.5, 10],
-				[27.1, 10],
-				[2.9, 11.5],
-				[7.1, 10.8],
-				[2.1, 12],
-			],
-		},
-		{
-			name: 'SAMPLE C',
-			data: [
-				[21.7, 3],
-				[23.6, 3.5],
-				[24.6, 3],
-				[29.9, 3],
-				[21.7, 20],
-				[23, 2],
-				[10.9, 3],
-				[28, 4],
-				[27.1, 0.3],
-				[16.4, 4],
-				[13.6, 0],
-				[19, 5],
-				[22.4, 3],
-				[24.5, 3],
-				[32.6, 3],
-				[27.1, 4],
-				[29.6, 6],
-				[31.6, 8],
-				[21.6, 5],
-				[20.9, 4],
-				[22.4, 0],
-				[32.6, 10.3],
-				[29.7, 20.8],
-				[24.5, 0.8],
-				[21.4, 0],
-				[21.7, 6.9],
-				[28.6, 7.7],
-				[15.4, 0],
-				[18.1, 0],
-				[33.4, 0],
-				[16.4, 0],
-			],
-		},
-	];
-	const options = {
-		chart: {
-			height: 350,
-			type: 'scatter' as const,
-			zoom: {
-				enabled: true,
-				type: 'xy' as const,
+		[],
+	);
+
+	const series = useMemo(() => {
+		return data?.reduce(
+			(acc, curr) => {
+				const point = {
+					styleId: curr.styleId,
+					cluster: curr.cluster,
+					imageURL: curr.imageURL,
+					mallTypeId: curr.mallTypeId,
+					x: curr.x,
+					y: curr.y,
+				};
+
+				if (acc[curr.cluster]) {
+					acc[curr.cluster].data.push(point);
+				} else {
+					acc[curr.cluster] = {
+						name: `Cluster ${curr.cluster}`,
+						data: [point],
+					};
+				}
+
+				return acc;
 			},
-		},
-		xaxis: {
-			tickAmount: 10,
-			labels: {
-				formatter: function (val) {
-					return parseFloat(val).toFixed(1);
+			[] as { name: string; data: any[] }[],
+		);
+	}, [data]);
+
+	const options = useMemo(() => {
+		return {
+			chart: {
+				id: chartId,
+				height: 350,
+				type: 'scatter' as const,
+				zoom: {
+					enabled: true,
+					type: 'xy' as const,
+				},
+				events: {
+					dataPointSelection: function (event, chartContext, config) {
+						const data = config.w.config.series[config.seriesIndex].data[config.dataPointIndex];
+						window.open(`/style/detail/${data.mallTypeId}/${data.styleId}`);
+					},
+					dataPointMouseEnter: function (event, chartContext, config) {
+						const data = config.w.config.series[config.seriesIndex].data[config.dataPointIndex];
+						handleHoverDebounced(data.mallTypeId, data.styleId);
+					},
+					dataPointMouseLeave: function () {
+						setHoveredStyleId(null);
+						setHoveredMallTypeId(null);
+					},
 				},
 			},
-		},
-		yaxis: {
-			tickAmount: 7,
-		},
-	};
+			tooltip: {
+				custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+					const data = w.config.series[seriesIndex].data[dataPointIndex];
+					return `
+						<div class="tooltip-box p-10">
+							<div class="image-wrapper" style="position: relative; width: 96px; height: 144px;">
+								<div class="skeleton" style="${skeletonStyle}"></div>
+								<img class="lazy-image w-24 h-[144px] object-cover" 
+									src="${data.imageURL}" 
+									alt="style Image" 
+									style="position: absolute; top: 0; left: 0; display: none;" 
+									onload="this.style.display='block'; this.previousElementSibling.style.display='none';" />
+							</div>
+							<strong>상품 이름:</strong> 로딩 중... <br/>
+						</div>
+					`;
+				},
+			},
+			xaxis: {
+				tickAmount: 10,
+				labels: {
+					formatter: function (val) {
+						return parseFloat(val).toFixed(1);
+					},
+				},
+			},
+			yaxis: {
+				tickAmount: 7,
+			},
+		};
+	}, []);
 
+	// 에러, 로딩, 데이터가 없을 때 처리
+	if (isLoading) {
+		return <Loading />;
+	}
+
+	if (!data || data.length === 0) {
+		return <DefaultView />;
+	}
+
+	if (isError) {
+		return (
+			<div className="flex justify-center items-center h-96">
+				<p className="text-red-500">데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.</p>
+			</div>
+		);
+	}
+
+	// 차트 렌더링
 	return (
 		<div className="flex justify-center w-full mt-6">
 			<div className="w-full">
@@ -146,4 +195,6 @@ export default function ClusteringChart() {
 			</div>
 		</div>
 	);
-}
+});
+
+export default ClusteringChart;
