@@ -71,16 +71,19 @@ export default function ClusterFilter({
 				{categoryOptions.map((cat) => (
 					<li key={cat.categoryId}>
 						<div className="flex items-center">
-							<input
-								type="checkbox"
-								checked={
-									cat.categoryId === categoryList.find((category) => category.categoryId === cat.categoryId)?.categoryId
-								}
-								onChange={() => {
-									handleCategoryChange(cat.categoryId, cat.name);
-									setActiveFilter(null);
-								}}
-							/>
+							{cat.children.length === 0 && (
+								<input
+									type="checkbox"
+									checked={
+										cat.categoryId ===
+										categoryList.find((category) => category.categoryId === cat.categoryId)?.categoryId
+									}
+									onChange={() => {
+										handleCategoryChange(cat.categoryId, cat.name);
+										setActiveFilter(null);
+									}}
+								/>
+							)}
 							<span className="ml-2 cursor-pointer" onClick={() => toggleCategory(cat.categoryId)}>
 								{cat.name}
 							</span>
