@@ -51,7 +51,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						<div className="flex items-center">
 							<input
 								type="checkbox"
-								checked={((selectedFilter as any[]) ?? []).some((cat) => cat.categoryId === category.categoryId)}
+								checked={(selectedFilter as any[]).some((cat) => cat.categoryId === category.categoryId)}
 								onChange={() => handleCategoryChange(category)} // 전체 category 객체 전달
 							/>
 							<span className="ml-2 cursor-pointer" onClick={() => toggleCategory(category.categoryId)}>
