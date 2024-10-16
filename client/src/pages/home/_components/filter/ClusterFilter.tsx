@@ -185,6 +185,7 @@ export default function ClusterFilter({
 				<label className="block mb-2 text-md font-medium text-gray-700">클러스터링 군집 수</label>
 				<input
 					type="number"
+					min="1"
 					placeholder="분류할 군집의 개수를 선택해주세요."
 					className="mt-1 block pl-3 py-2 text-base bg-gray-100 border-gray-300  focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-xl"
 					value={offset}
