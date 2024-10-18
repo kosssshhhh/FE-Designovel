@@ -157,7 +157,7 @@ const ClusteringChart = React.memo(function ClusteringChart({ data, isLoading, i
 						</div>
 					`;
 				},
-				offsetY: 10,
+				offsetY: 20,
 			},
 			xaxis: {
 				min: 0,
