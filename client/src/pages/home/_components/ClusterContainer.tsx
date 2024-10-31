@@ -43,10 +43,14 @@ export default function ClusterContainer() {
 				/>
 				<div></div>
 				<div className="flex justify-end space-x-2">
-					<button className="bg-gray-500 text-white px-4 py-2 rounded-lg" onClick={handleReset}>
+					<button
+						className="text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:ring-gray-200 px-4 py-2 rounded-lg"
+						onClick={handleReset}>
 						초기화
 					</button>
-					<button className="bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={handleSubmit}>
+					<button
+						className="text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 px-4 py-2 rounded-lg"
+						onClick={handleSubmit}>
 						검색
 					</button>
 				</div>
