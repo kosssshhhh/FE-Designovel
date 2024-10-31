@@ -2,17 +2,17 @@ import { sidebarListType } from '@/layout/_types/type';
 
 export const SIDEBAR_ITEMS: sidebarListType[] = [
 	{
-		title: 'Home',
+		title: '홈',
 		href: '/',
 		svgName: 'home',
 	},
 	{
-		title: 'Style',
+		title: '스타일',
 		href: '/style?page=1',
 		svgName: 'user',
 	},
 	{
-		title: 'Image Search',
+		title: '이미지 검색',
 		href: '/imageSearch',
 		svgName: 'search',
 	},
