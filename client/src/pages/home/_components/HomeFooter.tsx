@@ -74,9 +74,9 @@ export default function HomeFooter() {
 				</div>
 			</footer>
 			<p className="text-center text-sm text-gray-500 my-10">
-				&copy; 2019-2024{' '}
-				<a href="https://themesberg.com" className="hover:underline" target="_blank">
-					Themesberg
+				Copyright &copy; 2022{' '}
+				<a href="https://www.designovel.com/" className="hover:underline" target="_blank">
+					DESIGNOVEL
 				</a>
 				. All rights reserved.
 			</p>
